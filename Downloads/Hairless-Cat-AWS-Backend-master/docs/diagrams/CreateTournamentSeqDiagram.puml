@@ -1,0 +1,22 @@
+@startuml
+skinparam maxMessageSize 150
+actor User
+participant TournamentController
+participant TournamentService
+participant TournamentConfigurationService
+participant ScheduleService
+database TournamentRepository
+
+User -> TournamentController: POST /tournaments
+TournamentController -> ScheduleService: create schedule from request body
+ScheduleService -> ScheduleService: create schedule (contains only the tournament timeslots, no matches scheduled yet)
+ScheduleService -> TournamentController: return schedule
+TournamentController -> TournamentConfigurationService: create configuration from request body
+TournamentConfigurationService -> TournamentConfigurationService: create tournament configuration
+TournamentConfigurationService -> TournamentController: return tournament configuration
+TournamentController -> TournamentService: create tournament from request body, schedule and tournament configuration
+TournamentService -> TournamentService: create tournament
+TournamentService -> TournamentRepository: add tournament to database
+TournamentService -> TournamentController: return tournament
+TournamentController -> User: return tournament
+@endeuml

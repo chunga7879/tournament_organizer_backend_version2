@@ -1,0 +1,33 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI with Maven
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v2
+#    - name: Set up JDK 17
+#      uses: actions/setup-java@v2
+#      with:
+#        java-version: '17'
+#        distribution: 'temurin'
+#        cache: maven
+    - name: Copy application-prod.properties in before building with Maven
+      run: cp ~/Hairless/application-prod.properties src/main/resources
+    - name: Build with Maven
+      run: ./mvnw clean package -Pprod
+    - name: Copy JAR package into application folder
+      run: cp target/app-0.0.1-SNAPSHOT.jar ~/Hairless
+    - name: Kill old processes
+      run: while killall -9 java; do printf '.'; done; printf '\n'
+    - name: Run JAR package
+      run: RUNNER_TRACKING_ID="" && java -jar ~/Hairless/app-0.0.1-SNAPSHOT.jar & disown; while ! lsof -i:8080; do printf ''; done

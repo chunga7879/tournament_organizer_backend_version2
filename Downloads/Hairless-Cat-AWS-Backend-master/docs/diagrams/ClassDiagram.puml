@@ -1,0 +1,140 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty members
+
+class User {
+    -Long userId
+    -boolean isAdmin
+    -String fName
+    -String lName
+    -String department
+    -String company
+    -String email
+    -String pNumber
+}
+
+class TeamMember {
+    -boolean isLeader
+    -Set<Long> userIndicatedTimeslotIds
+    -boolean indicatedAvailabilities
+}
+
+class Team {
+    -Long teamId
+    -String teamName
+}
+
+class Tournament {
+    -Long tournamentId
+    -String name
+    -String description
+    -Status status = Status.NOT_STARTED
+    -User adminUser
+}
+
+class TournamentParameter {
+    -Long tournamentParameterId
+    -int maxNumberOfTeams
+    -int minNumberOfTeams
+    -int minNumberOfPlayersPerTeam
+    -int maxNumberOfPlayersPerTeam
+    -TournamentType tournamentType
+    -TournamentStyle tournamentStyle
+}
+
+class TournamentTimeslot {
+    -List<Team> availableTeams
+}
+
+class Match {
+    -Long matchId
+    -MatchStatus matchStatus = MatchStatus.UPCOMING
+    -Map<Team, TeamStatus> teamStatusesMap
+
+    Match setSchedule(Schedule schedule)
+    Match setTournament(Tournament tournament)
+    void setMatchStatusUpcoming()
+}
+
+class Result {
+    -Long resultId
+    -List<Team> rankedTeam
+}
+
+class Schedule {
+    -Long scheduleId
+    -LocalDateTime tournamentStartTime
+    -LocalDateTime tournamentEndTime
+    -ScheduleStatus scheduleStatus = ScheduleStatus.SCHEDULE_NOT_GENERATED
+    -String scheduleStatusErrorMessage;
+
+    void setScheduleStatusSuccess()
+    boolean hasScheduleError()
+    boolean isScheduled()
+    boolean hasNotStartedScheduling()
+}
+
+class Timeslot {
+    -Long id
+    -LocalDateTime startTime
+    -LocalDateTime endTime
+}
+
+class Algorithm {
+    {static} List<Match> genRRMatches(List<TournamentTimeslot> tournamentTimeslots, List<Team> teams)
+}
+
+enum MatchStatus {
+    PENDING_TEAM_CONFIRMATION
+    UPCOMING
+    CANCELLED
+    COMPLETED
+}
+
+enum TeamStatus {
+    PENDING
+    CONFIRMED
+    CANCELLED
+}
+
+enum Status {
+    NOT_STARTED
+    COMPLETED
+    POSTPONED
+    IN_PROGRESS
+}
+
+enum TournamentType {
+    SINGLE
+    TEAM
+}
+
+enum TournamentStyle {
+    ROUND_ROBIN
+}
+
+enum ScheduleStatus {
+    SCHEDULE_NOT_GENERATED,
+    SCHEDULE_ERROR,
+    SCHEDULE_GENERATED_SUCCESS
+}
+
+User "1..*" -- "*" Team
+(User, Team) .. TeamMember
+Team "*" -- "1" Tournament
+Tournament *--> "1" TournamentParameter
+
+Tournament *--> "1" Schedule
+Schedule *--> "*" Match
+TournamentTimeslot --|> Timeslot
+Schedule *--> "*" TournamentTimeslot
+Team "*" -- "*" Match: "teamInMatch"
+Match *-- "1" Result
+note right of Result::winnerId
+    TODO: what if there is more than one winner? Or if it's a ranking score like in Mario kart?
+end note
+
+note right of TeamStatus
+    Indicates team's status of acceptance for a match
+end note
+@enduml

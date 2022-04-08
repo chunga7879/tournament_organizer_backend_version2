@@ -1,0 +1,19 @@
+@startuml
+skinparam maxMessageSize 150
+actor User
+participant TeamController
+participant TeamService
+participant UserService
+database TeamRepository
+
+User -> TeamController: POST /teams/{team_id}/players/
+TeamController -> UserService: get user from uid in request body
+UserService -> UserService: get user
+UserService -> TeamController: return user
+TeamController -> TeamService: pass user and team_id to team service
+TeamService -> TeamService: get team from team_id
+TeamService -> TeamService: add user to team
+TeamService -> TeamRepository: update team in database
+
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+skinparam maxMessageSize 150
+
+actor User
+participant TournamentController
+participant ScheduleService
+participant Algorithm
+database ScheduleRepository
+
+User -> TournamentController: POST "/tournaments/actions/gen_match_schedule/{tournament_id}"
+alt schedule is non-null and there is at least 1 timeslot
+    TournamentController -> ScheduleService: generate matches from the timeslots in schedule and the list of teams in the tournament
+    ScheduleService -> Algorithm: run Hopcroft-Karp algorithm to get list of round robin matches
+    Algorithm -> ScheduleService: returns list of matches
+    ScheduleService -> ScheduleService: add list of matches into schedule
+    ScheduleService -> ScheduleRepository: update schedule in database
+    TournamentController -> User: return HTTP Status 202
+else
+    TournamentController -> User: return HTTP Status 403
+end
+@enduml

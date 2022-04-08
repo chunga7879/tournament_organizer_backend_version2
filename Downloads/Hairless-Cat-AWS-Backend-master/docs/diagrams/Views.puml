@@ -1,0 +1,128 @@
+@startuml
+hide empty members
+interface Public {
+id
+}
+interface UserSummary {
+fname
+lname
+isadmin
+email
+}
+interface UserFull {
+department
+company
+pnumber
+teamAssociations
+}
+interface Membership{
+isleader
+}
+interface TeamAssociations{}
+interface TeamMembers{}
+interface TeamSummary {
+teamName
+}
+interface TeamExtended {
+tournament
+teamMembers
+}
+interface TeamFull {
+result
+matches
+}
+interface TournamentSummary {
+tournamentParameter
+name
+description
+status
+}
+interface TournamentFull {
+teams
+}
+interface ScheduleSummary {
+tournamentStartTime
+tournamentEndTime
+scheduleStatus
+}
+interface ScheduleExtended {
+scheduleStatusErrorMessage
+}
+interface ScheduleFull{
+timeslots
+}
+
+interface Timeslot{
+startTime
+endTime
+}
+interface TournamentTimeslot{
+availableTeams
+}
+
+interface TournamentParameterSummary {
+tournamentType
+tournamentStyle
+}
+interface TournamentParameterFull {
+minNumberOfTeams
+maxNumberOfTeams
+minNumberOfPlayersPerTeam
+maxNumberOfPlayersPerTeam
+}
+
+interface MatchSummary {
+status
+adminUser
+matchStartTime
+matchEndTime
+}
+interface MatchFull {
+teamInMatch
+tournament
+result
+}
+interface ResultSummary {
+    rankedTeam
+}
+interface ResultFull{
+    match
+}
+
+UserSummary ..|> Public
+TeamSummary ..|> Public
+Membership ..|> Public
+UserFull ..|> UserSummary
+UserFull ..|> TeamAssociations
+TeamAssociations ..|> TeamSummary
+TeamAssociations ..|> Membership
+TeamExtended ..|> TeamSummary
+TeamExtended ..|> TeamMembers
+TeamFull ..|> TeamExtended
+TeamMembers ..|> UserSummary
+TeamMembers ..|> Membership
+TournamentParameterSummary ..|> Public
+TournamentParameterFull ..|> TournamentParameterSummary
+ResultSummary ..|> TeamSummary
+ResultFull ..|> ResultSummary
+ResultFull ..|> MatchSummary
+MatchSummary ..|> Public
+MatchFull ..|> MatchSummary
+MatchFull ..|> ResultSummary
+Timeslot ..|> Public
+TournamentTimeslot ..|> Timeslot
+TournamentTimeslot ..|> TeamSummary
+ScheduleSummary ..|> Public
+ScheduleExtended ..|> MatchSummary
+ScheduleExtended ..|> Timeslot
+ScheduleExtended ..|> ScheduleSummary
+ScheduleFull ..|> ScheduleExtended
+ScheduleFull ..|> TournamentTimeslot
+TournamentSummary ..|> ScheduleSummary
+TournamentFull ..|> ScheduleExtended
+TournamentSummary ..|> Public
+TournamentSummary ..|> TournamentParameterSummary
+TournamentFull ..|> TournamentSummary
+TournamentFull ..|> TournamentParameterFull
+TournamentFull ..|> TeamSummary
+@enduml

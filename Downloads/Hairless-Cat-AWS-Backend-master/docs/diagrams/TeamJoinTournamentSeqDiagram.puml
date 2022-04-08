@@ -1,0 +1,17 @@
+@startuml
+skinparam maxMessageSize 150
+actor User
+participant TournamentController
+participant TournamentService
+participant TeamService
+database TournamentRepository
+
+User -> TournamentController: POST /tournament/{tournament_id}/teams/
+TournamentController -> TeamService: get user from teamid in request body
+TeamService -> TeamService: get team
+TeamService -> TournamentController: return team
+TournamentController -> TournamentService: pass team and tournament_id to tournament service
+TournamentService -> TournamentService: get tournament from tournament_id
+TournamentService -> TournamentService: add team to tournament
+TournamentService -> TournamentRepository: update tournament in database
+@enduml

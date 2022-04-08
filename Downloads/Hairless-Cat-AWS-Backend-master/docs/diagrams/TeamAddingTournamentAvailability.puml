@@ -1,0 +1,20 @@
+@startuml
+skinparam maxMessageSize 200
+
+actor User
+participant TournamentController
+participant ScheduleService
+database ScheduleRepository
+
+User -> TournamentController: GET /tournaments/{tournament_id}/timeslots
+TournamentController -> ScheduleService: get all the timeslots in the tournament's schedule
+ScheduleService -> ScheduleService: get tournament timeslots
+ScheduleService -> TournamentController: return tournament timeslots
+TournamentController --> User: return tournament timeslots
+User -> User: chooses from timeslots the team's available timings
+User -> TournamentController: POST /tournaments/{tournament_id}/schedule/timeslots/{team_id}
+TournamentController -> ScheduleService: add team to the timeslots that the team is available for
+ScheduleService -> ScheduleService: add team to the timeslots they are available for
+ScheduleService -> ScheduleRepository: update database
+
+@enduml

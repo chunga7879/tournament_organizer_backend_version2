@@ -1,0 +1,13 @@
+@startuml
+actor User
+participant UserController
+participant UserService
+database UserRepository
+
+User -> UserController: POST /users
+UserController -> UserService: create user from request body
+UserService -> UserService: create user
+UserService -> UserRepository: add user to database
+UserService -> UserController: return user
+UserController -> User: return user
+@enduml
